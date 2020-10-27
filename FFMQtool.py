@@ -76,7 +76,7 @@ dialogues: list = [
 
 char_tbl: dict = {
     # Special Bytes
-    0x01: '<LINE>\n', 0x30: '<SCROLL>\n', 0x31: '\n<SPEAKER1:>', 0x32: '\n<SPEAKER2:>', 0x35: '<HERONAME>',
+    0x01: '<LINE>\n', 0x30: '<SCROLL>\n', 0x31: '\n<SPEAKER1:>\n', 0x32: '\n<SPEAKER2:>\n', 0x35: '<HERONAME>',
     # FONT
     0x90: '0', 0x91: '1', 0x92: '2', 0x93: '3', 0x94: '4', 0x95: '5', 0x96: '6', 0x97: '7', 0x98: '8', 0x99: '9',
     0x9A: 'A', 0x9B: 'B', 0x9C: 'C', 0x9D: 'D', 0x9E: 'E', 0x9F: 'F', 0xA0: 'G', 0xA1: 'H', 0xA2: 'I', 0xA3: 'J',
@@ -84,8 +84,8 @@ char_tbl: dict = {
     0xAE: 'U', 0xAF: 'V', 0xB0: 'W', 0xB1: 'X', 0xB2: 'Y', 0xB3: 'Z', 0xB4: 'a', 0xB5: 'b', 0xB6: 'c', 0xB7: 'd',
     0xB8: 'e', 0xB9: 'f', 0xBA: 'g', 0xBB: 'h', 0xBC: 'i', 0xBD: 'j', 0xBE: 'k', 0xBF: 'l', 0xC0: 'm', 0xC1: 'n',
     0xC2: 'o', 0xC3: 'p', 0xC4: 'q', 0xC5: 'r', 0xC6: 's', 0xC7: 't', 0xC8: 'u', 0xC9: 'v', 0xCA: 'w', 0xCB: 'x',
-    0xCC: 'y', 0xCD: 'z', 0xCE: '!', 0xCF: '? ', 0xD0: ',', 0xD1: '\'', 0xD2: '.', 0xD3: '"', 0xD4: '"', 0xD5: '."',
-    0xD6: ';', 0xD7: ':', 0xD8: '…', 0xD9: '/', 0xDA: '-', 0xDB: '&', 0xDC: '>', 0xDD: '%', 0xFF: ' '
+    0xCC: 'y', 0xCD: 'z', 0xCE: '!', 0xCF: '? ', 0xD0: ',', 0xD1: '\'', 0xD2: '.', 0xD3: '\u201C', 0xD4: '\u201D',
+    0xD5: '."', 0xD6: ';', 0xD7: ':', 0xD8: '…', 0xD9: '/', 0xDA: '-', 0xDB: '&', 0xDC: '>', 0xDD: '%', 0xFF: ' '
 }
 
 mte_tbl: dict = {
@@ -100,37 +100,6 @@ mte_tbl: dict = {
     0x7D: 'k ', 0x7E: '\'t '
 }
 
-# special_tbl: dict = {
-#     'Hero:': (0x1A00, 0x1B00),
-#     'Old Man:': (0x1A02, 0x1A08, 0x1A81, 0x1B09, 0x1B2E, 0x1B81),
-#     'Man in Forest:': 0x1A0A,
-#     'Minotaur:': 0x1A0B,
-#     'Kaeli\'s Mom:': (0x1A14, 0x1A83, 0x1AAF),
-#     'Kaeli:': (0x1A15, 0x1A82, 0x1A99, 0x1A9C, 0x1AA0, 0x1AAC, 0x1B26, 0x1B5B, 0x1B82, 0x1B9C, 0x1BDB),
-#     'F. Rex:': 0x1A1B,
-#     'Phoebe:': (0x1A1C, 0x1A46, 0x1A60, 0x1A7C, 0x1A87, 0x1A8A, 0x1A8B, 0x1A8C, 0x1A8D, 0x1A8E, 0x1A90, 0x1AAD, 0x1B1C,
-#                 0x1B89),
-#     'Ice Golem:': 0x1A31,
-#     'Spencer:': (0x1A32, 0x1A9F, 0x1AB0, 0x1B32, 0x1B3F, 0x1BAA),
-#     'Arion:': (0x1A3B, 0x1A92, 0x1B3B),
-#     'Arion\'s Friend:': 0x1A3C,
-#     'Hydra:': 0x1A4E,
-#     'Otto:': (0x1A5B, 0x1A5C, 0x1AB2, 0x1B5C),
-#     'Mac:': (0x1A5F, 0x1AA9, 0x1AB4, 0x1B5F, 0x1B75),
-#     'Tristam:': (0x1A84, 0x1A85, 0x1A86, 0x1A8F, 0x1A96, 0x1A98, 0x1A9E, 0x1B7E, 0x1B84, 0x1B86),
-#     'Sprite:': (0x1A88, 0x1A89),
-#     'Reuben:': (0x1A91, 0x1A95, 0x1AA1, 0x1AA4, 0x1AAB, 0x1AAE, 0x1B3A, 0x1B94, 0x1B95, 0x1B9D),
-#     'Monster:': 0x1A97,
-#     'Light Crystal:': 0x1AA2,
-#     'Crystals:': 0x1AA7,
-#     'Girl:': 0x1AB3,
-#     'Woman:': 0x1AB5,
-#     'Tree:': 0x1B4F,
-#     'Dullihan:': 0x1B54,
-#     'Norma:': 0x1B6A,
-#     'Dark King:': 0x1B7A,
-#     '???:': (0x1BA2, 0x1BA3, 0x1BA5)
-# }
 
 special_tbl: dict = {
     # Character Speaking
@@ -241,7 +210,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog='FFMQtool',
                                      description=desc,
-                                     usage='%(prog)s.py [-e FILE] [-i FOLDER]',
+                                     usage='%(prog)s.py [-e ROM] [-i DUMP ROM]',
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 
     commands = parser.add_argument_group('commands')
@@ -269,7 +238,8 @@ def main():
         if not os.path.exists(args.insert) or not os.path.isdir(args.insert):
             print('\nFile does not exist')
             exit()
-        pass
+        # rom = open(args.insert, "rb").read()
+        # check_rom(rom)
         # do_insert_script(args.insert)
 
 
@@ -303,14 +273,8 @@ def do_decode_block(block):
             if b1 in mte_tbl:
                 decoded_block += mte_tbl[b1]
 
-            # if b1 == 0x1A
-            #   for values in special_tbl.values():
-            #       if b1 in values:
-            #           decoded_block += "<{:02X} {}>\n".format(char, special_tbl[char])
-            #           i += 1
-
             elif b2 is not None or b3 is not None:
-                char: int = (b1 * 256) + b2
+                char: int = (b1 << 8 | b2)
 
                 if b1 == 0x1A and char in special_tbl:
                     decoded_block += "<{:02X} {}>\n".format(char, special_tbl[char])
@@ -343,7 +307,7 @@ def do_decode_block(block):
 def do_extract_script(rom):
 
     print("Extracting {} dialogues...".format(len(dialogues) + 1))
-    output = open("dump_eng.txt", "w")
+    output = open("dump_eng.txt", "w", encoding="utf-8")
     i = 0
 
     while i < len(dialogues):
