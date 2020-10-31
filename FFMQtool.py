@@ -2,7 +2,9 @@
 
 import argparse
 import os
+import struct
 import zlib
+
 
 dialogues: list = [
     # Game Dialogues
@@ -210,38 +212,61 @@ def main():
            'Website: https://mumble.romhacking.it'
 
     parser = argparse.ArgumentParser(prog='FFMQtool',
-                                     description=desc,
-                                     usage='%(prog)s.py [-e ROM] [-i DUMP ROM]',
-                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=desc)
 
-    commands = parser.add_argument_group('commands')
-    commands.add_argument('-e', '--extract', metavar='', type=str, help='extract game script')
-    commands.add_argument('-i', '--insert', metavar='', type=str, help='insert game script')
+    commands = parser.add_subparsers(dest='command')
+
+    extract = commands.add_parser('extract', help='extract script or font from ROM')
+    extract.add_argument('SCRIPTorFONT', choices=['script', 'font'])
+    extract.add_argument('ROM', help='ROM file')
+
+    insert = commands.add_parser('insert', help='extract script or font from ROM')
+    insert.add_argument('SCRIPTorFONT', choices=['script', 'font'])
+    insert.add_argument('FILE', help='SCRIPT TXT or FONT BIN file')
+    insert.add_argument('ROM', help='ROM file')
 
     args = parser.parse_args()
 
     # If no argument is passed, show the help
-    if args.extract is None and args.insert is None:
+    if args.command is None:
         parser.print_help()
+    else:
+        # If extract argument is passed, check if file exists and is a file, then extract
+        if args.command == 'extract':
+            if not os.path.exists(args.ROM) or not os.path.isfile(args.ROM):
+                print('\nROM File does not exist')
+                exit()
 
-    # If extract argument is passed, check if file exists and is a file, then extract
-    elif args.extract:
-        if not os.path.exists(args.extract) or not os.path.isfile(args.extract):
-            print('\nFile does not exist')
-            exit()
+            rom = open(args.ROM, "rb").read()
+            # Check validity of ROM
+            check_rom(rom)
 
-        rom = open(args.extract, "rb").read()
-        check_rom(rom)
-        do_extract_script(rom)
+            if args.SCRIPTorFONT == 'script':
+                do_extract_script(rom)
+            else:
+                do_extract_font(rom)
 
-    # If insert argument is passed, check if folder exists and is a folder, then insert
-    elif args.insert:
-        if not os.path.exists(args.insert) or not os.path.isdir(args.insert):
-            print('\nFile does not exist')
-            exit()
-        # rom = open(args.insert, "rb").read()
-        # check_rom(rom)
-        # do_insert_script(args.insert)
+        # If insert argument is passed, check if folder exists and is a folder, then insert
+        elif args.command == 'insert':
+
+            if not os.path.exists(args.FILE) or not os.path.isfile(args.FILE):
+                print('\nSCRIPT of FONT Files do not exist')
+                exit()
+            elif not os.path.exists(args.ROM) or not os.path.isfile(args.ROM):
+                print('\nROM Files do not exist')
+                exit()
+
+            rom = open(args.ROM, 'rb+').read()
+            # Check validity of ROM
+            check_rom(rom)
+
+            if args.SCRIPTorFONT == 'script':
+                script = open(args.FILE, 'r').readlines()
+                do_insert_script(rom, script)
+            elif args.SCRIPTorFONT == 'font':
+                font = open(args.FILE, 'rb').read()
+                do_insert_font(rom, font)
 
 
 def check_rom(rom):
@@ -254,6 +279,30 @@ def check_rom(rom):
         exit()
     else:
         pass
+
+
+########################################################################################################################
+# INSERTION
+########################################################################################################################
+
+
+def do_extract_script(rom):
+
+    print("\nExtracting {} dialogues...".format(len(dialogues) + 1))
+    output = open("dump_eng.txt", "w", encoding="utf-8")
+    i = 0
+
+    while i < len(dialogues):
+        ofs_start = (dialogues[i])[0]
+        ofs_end = (dialogues[i])[1]
+        output.write("[BLOCK {}: 0x{:02X} to 0x{:02X}]\n".format(i, ofs_start, ofs_end))
+        block: bytes = rom[ofs_start:ofs_end]
+        decoded_block = do_decode_block(block)
+        output.write(decoded_block + "\n\n")
+        i += 1
+
+    output.close()
+    print("Extraction completed!")
 
 
 def do_decode_block(block):
@@ -305,23 +354,76 @@ def do_decode_block(block):
     return decoded_block
 
 
-def do_extract_script(rom):
+def do_extract_font(rom):
+    print("\nExtracting font...")
+    output = open("font.bin", "wb")
 
-    print("Extracting {} dialogues...".format(len(dialogues) + 1))
-    output = open("dump_eng.txt", "w", encoding="utf-8")
+    # Reading the font from the ROM (4096 bytes)
+    font_data: bytes = rom[0x38030:0x39030]
+
+    # Read and organize the pixels in 64 bytes chunks
     i = 0
-
-    while i < len(dialogues):
-        ofs_start = (dialogues[i])[0]
-        ofs_end = (dialogues[i])[1]
-        output.write("[BLOCK {}: 0x{:02X} to 0x{:02X}]\n".format(i, ofs_start, ofs_end))
-        block: bytes = rom[ofs_start:ofs_end]
-        decoded_block = do_decode_block(block)
-        output.write(decoded_block + "\n\n")
-        i += 1
+    while i < len(font_data):
+        tiles = 0
+        while tiles < 64:
+            pixel01: bytes = font_data[i:i + 2]
+            pixel23: bytes = font_data[i + 0x040:i + 0x042]
+            pixel45: bytes = font_data[i + 0x080:i + 0x082]
+            pixel67: bytes = font_data[i + 0x0C0:i + 0x0C2]
+            pixel89: bytes = font_data[i + 0x100:i + 0x102]
+            pixelAB: bytes = font_data[i + 0x140:i + 0x142]
+            pixelCD: bytes = font_data[i + 0x180:i + 0x182]
+            pixelEF: bytes = font_data[i + 0x1C0:i + 0x1C2]
+            output.write(pixel01 + pixel23 + pixel45 + pixel67 + pixel89 + pixelAB + pixelCD + pixelEF)
+            tiles += 2
+            i += 2
+        i += 448
 
     output.close()
     print("Extraction completed!")
+
+
+########################################################################################################################
+# INSERTION
+########################################################################################################################
+
+
+def do_insert_script(rom, script):
+    pass
+
+
+def do_insert_font(rom, font):
+    print("\nInserting font...")
+
+    # Prepping the compressed data (4096 bytes)
+    compressed_font_data: list = [0] * 4096
+
+    output = open('ffmq_new.sfc', 'wb')
+
+    # Read and organize the pixels in 64 bytes chunks
+    i = 0
+    block = 0
+    base = 0
+    while i < len(font):
+        if i in (0x200, 0x400, 0x600, 0x800, 0xA00, 0xC00, 0xE00):
+            block += 0x1C0
+        tile = 0
+        ofs = 0
+
+        while tile < 16:
+            pixel = list(font[i:i + 2])
+            compressed_font_data[block+base+ofs:block+base+ofs+2] = pixel
+            ofs += 0x40
+            tile += 2
+            i += 2
+        base += 2
+
+    list(rom)[0x38030:0x39030] = compressed_font_data
+
+    output.write(rom)
+    output.close()
+
+    print("Insertion completed!")
 
 
 if __name__ == '__main__':
