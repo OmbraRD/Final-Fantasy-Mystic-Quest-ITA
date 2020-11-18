@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
-import argparse
-import os
-import struct
-import zlib
-
+import argparse, os, sys, struct, zlib, struct
+from collections import OrderedDict
 
 dialogues: list = [
     # Game Dialogues
@@ -259,11 +256,11 @@ def main():
 
             rom = open(args.ROM, 'rb+').read()
             # Check validity of ROM
-            check_rom(rom)
+            # check_rom(rom)
 
             if args.SCRIPTorFONT == 'script':
                 script = open(args.FILE, 'r').readlines()
-                do_insert_script(rom, script)
+                do_insert_script(args.ROM, args.FILE)
             elif args.SCRIPTorFONT == 'font':
                 font = open(args.FILE, 'rb').read()
                 do_insert_font(rom, font)
@@ -387,10 +384,47 @@ def do_extract_font(rom):
 # INSERTION
 ########################################################################################################################
 
+def pc2lorom(offset):
+    return ((offset * 2) & 0xFF0000) + (offset & 0x7FFF) + 0x8000
 
 def do_insert_script(rom, script):
-    pass
-
+    buffer = OrderedDict()
+    with open(script, 'r') as f:
+        block = ''
+        for line in f:
+            if '[BLOCK ' in line:
+                splitted_line = line.split(' ')
+                block = splitted_line[1].replace(':', '')
+                offset_from = int(splitted_line[2], 16)
+                offset_to = int(splitted_line[4].replace(']\n', ''), 16)
+                buffer[block] = ['', [offset_from, offset_to]]
+            else:
+                buffer[block][0] += line
+    index = 0
+    table_offset = 0x81000
+    new_text_offset = 0x82000
+    with open(rom, 'rb+') as f:
+        for block, value in buffer.items():
+            [text, offsets] = value
+            # TODO condificare text in formato scrivibile nella rom
+            [offset_from, offset_to] = offsets
+            #
+            f.seek(offset_from) # vado all'indirizzo del testo originale
+            f.write(b'\xf0') # scrivo 0xf0
+            f.write(struct.pack('<H', index)) # scrivo l'indice della tabella nel vecchio testo
+            index_offset = table_offset + (index * 3) # calcolo l'indirizzo dell'indice della tabella
+            f.seek(index_offset) # vado all'indirizzo dell'indice della tabella
+            new_text_pointer = struct.pack('i', pc2snes(new_text_offset)) # converto l'indirizzo
+            f.write(new_text_pointer[:3]) # scrivo il puntatore al nuovo testo
+            return_pointer = struct.pack('i', pc2snes(offset_to)) # converto l'indirizzo
+            f.write(return_pointer[:3]) # scrivo il puntatore di ritorno al vecchio testo
+            index += 1 # incremento l'indice
+            f.seek(new_text_offset) # vado all'indirizzo dove scrivere il testo
+            f.write(b'\x1a\x00\xa9') # scrivo il testo
+            f.write(b'\xf0') # scrivo 0xf0
+            f.write(struct.pack('<H', index)) # scrivo l'indice della tabella
+            new_text_offset = f.tell()
+            index += 1 # incremento l'indice
 
 def do_insert_font(rom, font):
     print("\nInserting font...")
