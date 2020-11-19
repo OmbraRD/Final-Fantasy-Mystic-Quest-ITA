@@ -84,9 +84,11 @@ char_tbl: dict = {
     0xAE: 'U', 0xAF: 'V', 0xB0: 'W', 0xB1: 'X', 0xB2: 'Y', 0xB3: 'Z', 0xB4: 'a', 0xB5: 'b', 0xB6: 'c', 0xB7: 'd',
     0xB8: 'e', 0xB9: 'f', 0xBA: 'g', 0xBB: 'h', 0xBC: 'i', 0xBD: 'j', 0xBE: 'k', 0xBF: 'l', 0xC0: 'm', 0xC1: 'n',
     0xC2: 'o', 0xC3: 'p', 0xC4: 'q', 0xC5: 'r', 0xC6: 's', 0xC7: 't', 0xC8: 'u', 0xC9: 'v', 0xCA: 'w', 0xCB: 'x',
-    0xCC: 'y', 0xCD: 'z', 0xCE: '!', 0xCF: '? ', 0xD0: ',', 0xD1: '\'', 0xD2: '.', 0xD3: '\u201C', 0xD4: '\u201D',
+    0xCC: 'y', 0xCD: 'z', 0xCE: '!', 0xCF: '?', 0xD0: ',', 0xD1: '\'', 0xD2: '.', 0xD3: '\u201C', 0xD4: '\u201D',
     0xD5: '."', 0xD6: ';', 0xD7: ':', 0xD8: '…', 0xD9: '/', 0xDA: '-', 0xDB: '&', 0xDC: '>', 0xDD: '%', 0xFF: ' '
 }
+
+inv_char_tbl = {v: k for k, v in char_tbl.items()}
 
 mte_tbl: dict = {
     # MTE
@@ -387,6 +389,55 @@ def do_extract_font(rom):
 def pc2lorom(offset):
     return ((offset * 2) & 0xFF0000) + (offset & 0x7FFF) + 0x8000
 
+def do_encode_text(text):
+    encoded_text = b''
+    i = 0
+    while i < len(text):
+        char = text[i]
+        if char == '<':
+            char_to_decode = '<'
+            while char != '>':
+                i += 1
+                char = text[i]
+                char_to_decode += char
+            if char_to_decode == '<LINE>':
+                char_to_decode = '<LINE>\n'
+            elif char_to_decode == '<SCROLL>':
+                char_to_decode = '<SCROLL>\n'
+            elif char_to_decode == '<SPEAKER1:>':
+                char_to_decode = '\n<SPEAKER1:>\n'
+            elif char_to_decode == '<SPEAKER2:>':
+                char_to_decode = '\n<SPEAKER2:>\n'
+            decoded_char = inv_char_tbl.get(char_to_decode)
+            if not decoded_char:
+                if ':' in char_to_decode:
+                    special_code = char_to_decode.split(' ')[0][1:]
+                    special_code_int = int(special_code, 16)
+                    if special_tbl.get(special_code_int):
+                        encoded_char = struct.pack(">h", special_code_int)
+                    else:
+                        raise Exception(char_to_decode)
+                else:
+                    char_to_decode = char_to_decode[1:-1].replace(' ???', '')
+                    encoded_char = bytes.fromhex(char_to_decode)
+            else:
+                encoded_char = struct.pack(">b", decoded_char)
+            encoded_text += encoded_char
+        else:
+            if char != '\n':
+                if char == '.':
+                    if text[i + 1] == '"':
+                        i += 1
+                        encoded_text += b'\xd5'
+                else:
+                    encoded_char = inv_char_tbl.get(char)
+                    if not encoded_char:
+                        raise Exception(char)
+                    encoded_text += bytes([encoded_char])
+        i += 1
+    # print(encoded_text)
+    return encoded_text
+
 def do_insert_script(rom, script):
     buffer = OrderedDict()
     with open(script, 'r') as f:
@@ -405,22 +456,22 @@ def do_insert_script(rom, script):
     new_text_offset = 0x82000
     with open(rom, 'rb+') as f:
         for block, value in buffer.items():
+            # print("BLOCK: " + block)
             [text, offsets] = value
-            # TODO condificare text in formato scrivibile nella rom
+            encoded_text = do_encode_text(text) # codifica il testo
             [offset_from, offset_to] = offsets
-            #
             f.seek(offset_from) # vado all'indirizzo del testo originale
             f.write(b'\xf0') # scrivo 0xf0
             f.write(struct.pack('<H', index)) # scrivo l'indice della tabella nel vecchio testo
             index_offset = table_offset + (index * 3) # calcolo l'indirizzo dell'indice della tabella
             f.seek(index_offset) # vado all'indirizzo dell'indice della tabella
-            new_text_pointer = struct.pack('i', pc2snes(new_text_offset)) # converto l'indirizzo
+            new_text_pointer = struct.pack('i', pc2lorom(new_text_offset)) # converto l'indirizzo
             f.write(new_text_pointer[:3]) # scrivo il puntatore al nuovo testo
-            return_pointer = struct.pack('i', pc2snes(offset_to)) # converto l'indirizzo
+            return_pointer = struct.pack('i', pc2lorom(offset_to)) # converto l'indirizzo
             f.write(return_pointer[:3]) # scrivo il puntatore di ritorno al vecchio testo
             index += 1 # incremento l'indice
             f.seek(new_text_offset) # vado all'indirizzo dove scrivere il testo
-            f.write(b'\x1a\x00\xa9') # scrivo il testo
+            f.write(encoded_text) # scrivo il testo
             f.write(b'\xf0') # scrivo 0xf0
             f.write(struct.pack('<H', index)) # scrivo l'indice della tabella
             new_text_offset = f.tell()
