@@ -240,7 +240,7 @@ def main():
 
             rom = open(args.ROM, "rb").read()
             # Check validity of ROM
-            check_rom(rom)
+            # check_rom(rom)
 
             if args.SCRIPTorFONT == 'script':
                 do_extract_script(rom)
@@ -507,9 +507,10 @@ def do_insert_font(rom, font):
             i += 2
         base += 2
 
-    list(rom)[0x38030:0x39030] = compressed_font_data
+    new_rom = list(rom)
+    new_rom[0x38030:0x39030] = compressed_font_data
 
-    output.write(rom)
+    output.write(bytes(new_rom))
     output.close()
 
     print("Insertion completed!")
