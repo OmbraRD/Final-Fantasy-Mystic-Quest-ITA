@@ -85,7 +85,8 @@ char_tbl: dict = {
     0xB8: 'e', 0xB9: 'f', 0xBA: 'g', 0xBB: 'h', 0xBC: 'i', 0xBD: 'j', 0xBE: 'k', 0xBF: 'l', 0xC0: 'm', 0xC1: 'n',
     0xC2: 'o', 0xC3: 'p', 0xC4: 'q', 0xC5: 'r', 0xC6: 's', 0xC7: 't', 0xC8: 'u', 0xC9: 'v', 0xCA: 'w', 0xCB: 'x',
     0xCC: 'y', 0xCD: 'z', 0xCE: '!', 0xCF: '?', 0xD0: ',', 0xD1: '\'', 0xD2: '.', 0xD3: '\u201C', 0xD4: '\u201D',
-    0xD5: '."', 0xD6: ';', 0xD7: ':', 0xD8: '…', 0xD9: '/', 0xDA: '-', 0xDB: '&', 0xDC: '>', 0xDD: '%', 0xFF: ' '
+    0xD5: '."', 0xD6: ';', 0xD7: ':', 0xD8: '…', 0xD9: '/', 0xDA: '-', 0xDB: '&', 0xDC: '>', 0xDD: '%', 0xFF: ' ',
+    0xDE: 'È', 0xDF: 'à', 0xE0: 'é', 0xE1: 'è', 0xE2: 'ì', 0xE3: 'ò', 0xE4: 'ù'
 }
 
 inv_char_tbl = {v: k for k, v in char_tbl.items()}
@@ -429,6 +430,9 @@ def do_encode_text(text):
                     if text[i + 1] == '"':
                         i += 1
                         encoded_text += b'\xd5'
+                    else:
+                        encoded_char = inv_char_tbl.get(char)
+                        encoded_text += bytes([encoded_char])
                 else:
                     encoded_char = inv_char_tbl.get(char)
                     if not encoded_char:
