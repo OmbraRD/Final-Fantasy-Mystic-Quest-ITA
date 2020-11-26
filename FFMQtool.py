@@ -114,11 +114,11 @@ special_tbl: dict = {
     0x1A86: 'Tristam:', 0x1A87: 'Phoebe:', 0x1A88: 'Sprite:', 0x1A89: 'Sprite:', 0x1A8A: 'Phoebe:',
     0x1A8B: 'Phoebe:', 0x1A8C: 'Phoebe:', 0x1A8D: 'Phoebe:', 0x1A8E: 'Phoebe:', 0x1A8F: 'Tristam:',
     0x1A90: 'Phoebe:', 0x1A91: 'Reuben:', 0x1A92: 'Arion:', 0x1A95: 'Reuben:', 0x1A96: 'Tristam:',
-    0x1A97: 'Monster:', 0x1A98: 'Tristam:', 0x1A99: 'Kaeli:', 0x1A9C: 'Kaeli:', 0x1A9E: 'Tristam:',
-    0x1A9F: 'Spencer:', 0x1AA0: 'Kaeli:', 0x1AA1: 'Reuben:', 0x1AA2: 'Light Crystal:', 0x1AA4: 'Reuben:',
-    0x1AA7: 'Crystals:', 0x1AA9: 'Mac:', 0x1AAB: 'Reuben:', 0x1AAC: 'Kaeli:', 0x1AAD: 'Phoebe:',
-    0x1AAE: 'Reuben:', 0x1AAF: 'Kaeli\'s Mom:', 0x1AB0: 'Spencer:', 0x1AB2: 'Otto:', 0x1AB3: 'Girl:',
-    0x1AB4: 'Mac:', 0x1AB5: 'Woman:',
+    0x1A97: 'Monster:', 0x1A98: 'Tristam:', 0x1A99: 'Kaeli:', 0x1A9C: 'Kaeli:', 0x1A9D: '???',
+    0x1A9E: 'Tristam:', 0x1A9F: 'Spencer:', 0x1AA0: 'Kaeli:', 0x1AA1: 'Reuben:', 0x1AA2: 'Light Crystal:',
+    0x1AA4: 'Reuben:', 0x1AA7: 'Crystals:', 0x1AA9: 'Mac:', 0x1AAB: 'Reuben:', 0x1AAC: 'Kaeli:',
+    0x1AAD: 'Phoebe:', 0x1AAE: 'Reuben:', 0x1AAF: 'Kaeli\'s Mom:', 0x1AB0: 'Spencer:', 0x1AB1: '???',
+    0x1AB2: 'Otto:', 0x1AB3: 'Girl:', 0x1AB4: 'Mac:', 0x1AB5: 'Woman:',
     # Character mentioned
     0x1B00: 'Hero:', 0x1B09: 'Old Man:', 0x1B1C: 'Phoebe:', 0x1B26: 'Kaeli:', 0x1B2E: 'Old Man:',
     0x1B32: 'Spencer:', 0x1B3B: 'Arion:', 0x1B3A: 'Reuben:', 0x1B3F: 'Spencer:', 0x1B4F: 'Tree:',
@@ -282,7 +282,7 @@ def check_rom(rom):
 
 
 ########################################################################################################################
-# INSERTION
+# EXTRACTOR
 ########################################################################################################################
 
 
@@ -326,10 +326,7 @@ def do_decode_block(block):
             elif b2 is not None or b3 is not None:
                 char: int = (b1 << 8 | b2)
 
-                if b1 == 0x1A and char in special_tbl:
-                    decoded_block += "<{:02X} {}>\n".format(char, special_tbl[char])
-                    i += 1
-                elif b1 == 0x1B and char in special_tbl:
+                if b1 in (0x1A, 0x1B) and char in special_tbl:
                     decoded_block += "\n<{:02X} {}>\n".format(char, special_tbl[char])
                     i += 1
                 elif b1 in (0x1D, 0x1E, 0x1F, 0x20) and char in special_tbl:
