@@ -107,9 +107,9 @@ mte_tbl: dict = {
 special_tbl: dict = {
     # Character Speaking
     0x1A00: 'Hero:', 0x1A02: 'Old Man:', 0x1A08: 'Old Man:', 0x1A0A: 'Man in Forest:', 0x1A0B: 'Minotaur:',
-    0x1A14: 'Kaeli\'s Mom:', 0x1A15: 'Kaeli:', 0x1A1B: 'F. Rex:', 0x1A1C: 'Phoebe:', 0x1A31: 'Ice Golem:',
+    0x1A14: 'Kaeli\'s Mom:', 0x1A15: 'Kaeli:', 0x1A1B: 'Flamerus Rex:', 0x1A1C: 'Phoebe:', 0x1A31: 'Ice Golem:',
     0x1A32: 'Spencer:', 0x1A3B: 'Arion:', 0x1A3C: 'Arion\'s Friend:', 0x1A46: 'Phoebe:', 0x1A4E: 'Hydra:',
-    0x1A5B: 'Otto:', 0x1A5C: 'Otto:', 0x1A5F: 'Mac1:', 0x1A60: 'Phoebe3:', 0x1A7C: 'Phoebe4:',
+    0x1A5B: 'Otto:', 0x1A5C: 'Otto:', 0x1A5F: 'Mac:', 0x1A60: 'Phoebe:', 0x1A7C: 'Phoebe:',
     0x1A81: 'Old Man:', 0x1A82: 'Kaeli:', 0x1A83: 'Kaeli\'s Mom:', 0x1A84: 'Tristam:', 0x1A85: 'Tristam:',
     0x1A86: 'Tristam:', 0x1A87: 'Phoebe:', 0x1A88: 'Sprite:', 0x1A89: 'Sprite:', 0x1A8A: 'Phoebe:',
     0x1A8B: 'Phoebe:', 0x1A8C: 'Phoebe:', 0x1A8D: 'Phoebe:', 0x1A8E: 'Phoebe:', 0x1A8F: 'Tristam:',
@@ -124,7 +124,7 @@ special_tbl: dict = {
     0x1B32: 'Spencer:', 0x1B3B: 'Arion:', 0x1B3A: 'Reuben:', 0x1B3F: 'Spencer:', 0x1B4F: 'Tree:',
     0x1B54: 'Dullihan:', 0x1B5B: 'Kaeli:', 0x1B5C: 'Otto:', 0x1B5F: 'Mac:', 0x1B6A: 'Norma:',
     0x1B75: 'Mac:', 0x1B7A: 'Dark King:', 0x1B7E: 'Tristam:', 0x1B81: 'Old Man:', 0x1B82: 'Kaeli:',
-    0x1B84: 'Tristam:', 0x1B86: 'Tristam:', 0x1B89: 'Phoebe:', 0x1B91: 'Rueben:', 0x1B94: 'Reuben:',
+    0x1B84: 'Tristam:', 0x1B86: 'Tristam:', 0x1B89: 'Phoebe:', 0x1B91: 'Reuben:', 0x1B94: 'Reuben:',
     0x1B95: 'Reuben:', 0x1B9C: 'Kaeli:', 0x1B9D: 'Reuben:', 0x1BA2: '???', 0x1BA3: '???', 0x1BA5: '???',
     0x1BAA: 'Spencer:', 0x1BDB: 'Kaeli:',
     # Main Characters Names
@@ -143,7 +143,7 @@ special_tbl: dict = {
     0x1E33: 'Noble Armor', 0x1E34: 'Gaia\'s Armor', 0x1E35: 'Relica Armor', 0x1E36: 'Mystic Robe',
     0x1E37: 'Flame Armor', 0x1E38: 'Black Robe', 0x1E39: 'Steel Shield', 0x1E3A: 'Venus Shield',
     0x1E3B: 'Aegis Shield', 0x1E3C: 'Ether Shield', 0x1E3D: 'Charm', 0x1E3E: 'Magic Shield', 0x1E3F: 'Cupid Locket',
-    # Weapons
+    # Weapons/Attacks
     0x1E40: 'Sword', 0x1E41: 'Scimitar', 0x1E42: 'Dragon Cut', 0x1E43: 'Rapier', 0x1E44: 'Axe', 0x1E45: 'Beam',
     0x1E46: 'Bone Missile', 0x1E47: 'Bow & Arrow', 0x1E48: 'Blow Dart', 0x1E49: 'Cure', 0x1E4A: 'Heal',
     0x1E4B: 'Quake', 0x1E4C: 'Blizzard', 0x1E4D: 'Fire', 0x1E4E: 'Thunder', 0x1E4F: 'Reflectant',
@@ -390,8 +390,12 @@ def do_extract_font(rom):
 # INSERTION
 ########################################################################################################################
 
-def pc2lorom(offset):
+def pc2snes_lorom(offset):
     return ((offset * 2) & 0xFF0000) + (offset & 0x7FFF) + 0x8000
+
+
+def snes2pc_lorom(offset):
+    return (int(offset / 2) & 0xFF0000) + (offset & 0xFFFF) - 0x8000
 
 def do_encode_text(text):
     encoded_text = b''
@@ -476,13 +480,13 @@ def do_insert_script(rom, script):
             index_offset = table_offset + (index * 3) # calcolo l'indirizzo dell'indice della tabella
             f.seek(index_offset) # vado all'indirizzo dell'indice della tabella
             if block in dialogues_to_move:
-                new_text_pointer = struct.pack('i', pc2lorom(old_text_offset)) # converto l'indirizzo
+                new_text_pointer = struct.pack('i', pc2snes_lorom(old_text_offset)) # converto l'indirizzo
             elif block in dialogues_to_keep.keys():
-                new_text_pointer = struct.pack('i', pc2lorom(dialogues_to_keep.get(block)))
+                new_text_pointer = struct.pack('i', pc2snes_lorom(dialogues_to_keep.get(block)))
             else:
-                new_text_pointer = struct.pack('i', pc2lorom(new_text_offset)) # converto l'indirizzo
+                new_text_pointer = struct.pack('i', pc2snes_lorom(new_text_offset)) # converto l'indirizzo
             f.write(new_text_pointer[:3]) # scrivo il puntatore alla posizione del nuovo testo nella tabella
-            return_pointer = struct.pack('i', pc2lorom(offset_to)) # converto l'indirizzo di ritorno
+            return_pointer = struct.pack('i', pc2snes_lorom(offset_to)) # converto l'indirizzo di ritorno
             f.write(return_pointer[:3]) # scrivo il puntatore di ritorno al vecchio testo nella tabella
             index += 1 # incremento l'indice
             if block in dialogues_to_move:
