@@ -77,20 +77,34 @@ dialogues: list = [
     (0x18BF5, 0x18BFc), # How many?
     (0x18C05, 0x18c0a), # Price
     (0x18c13, 0x18c17), # Gold
+
     (0x1A004, 0x1a016), # Give up? No/Yes
     (0x1A4c2, 0x1A4d0), # Battlefield Round
     (0x1A4F8, 0x1a506), # Already cleaned out!
+
     (0x1A146, 0x1A14A), # ITEM - BATTLE SUB
     (0x1A246, 0x1A24B), # SPELL - BATTLE SUB
+
     (0x1B0BE, 0x1b0C4), # BATTLE
-    (0x1B0CF, 0x1b0d2), # RUN
-    (0x1B0DD, 0x1b0e4), # CONTROL
+    (0x1B0CF, 0x1b0d2), # RUN (1BYTE)
+    (0x1B0DD, 0x1b0e4), # CONTROL (1BYTE)
+
     (0x1b13c, 0x1b140), # ITEM
     (0x1B14B, 0x1b152), # DEFENSE
     (0x1B15D, 0x1b163), # ATTACK
     (0x1B16E, 0x1b173), # SPELL
+
     (0x1B344, 0x1b348), # LIFE
-    ]
+
+    (0x1953A, 0x19542), # NEW GAME
+    (0x195D9, 0x195e6), # Save completed
+    (0x196A4, 0x196aa), # Empty!
+
+    (0x19A65, 0x19a70), # Defense Total
+    (0x19AD3, 0x19adb), # Attack Power
+    (0x19B0A, 0x19b13) # Defense Power
+
+]
 
 char_tbl: dict = {
     # Special Bytes
