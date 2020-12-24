@@ -3,22 +3,6 @@ norom
 ;; TABLE FOR INSERTION
 table menu.tbl,rtl
 
-;; MENU (45 bytes max)
-org $1AB0C
-  db "OGGETTI"
-  db $02
-  db "MAGIE"
-  db $02
-  db "ARMATURE"
-  db $02
-  db "ARMI"
-  db $02
-  db "STATO"
-  db $02
-  db "PREF."
-  db $02
-  db "SALVA "
-
 ;; BATTLE SUB MENU
 org $1B0B4
   db $15,$02 ; BATTLE HORIZONTAL POSITION
@@ -55,3 +39,7 @@ org $19534
   db $15,$02
   ; NEW GAME VERTICAL POSITION
   db $02
+
+org $195D5
+  ; SAVE COMPLETED HORIZONTAL POSITION
+  db $15,$03

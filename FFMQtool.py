@@ -78,7 +78,7 @@ dialogues: list = [
     (0x18C05, 0x18c0a), # Price
     (0x18c13, 0x18c17), # Gold
 
-    (0x1A004, 0x1a016), # Give up? No/Yes
+    (0x1A004, 0x1a017), # Give up? No/Yes
     (0x1A4c2, 0x1A4d0), # Battlefield Round
     (0x1A4F8, 0x1a506), # Already cleaned out!
 
@@ -95,14 +95,31 @@ dialogues: list = [
     (0x1B16E, 0x1b173), # SPELL
 
     (0x1B344, 0x1b348), # LIFE
-
     (0x1953A, 0x19542), # NEW GAME
     (0x195D9, 0x195e6), # Save completed
     (0x196A4, 0x196aa), # Empty!
-
     (0x19A65, 0x19a70), # Defense Total
     (0x19AD3, 0x19adb), # Attack Power
-    (0x19B0A, 0x19b13) # Defense Power
+    (0x19B0A, 0x19b13), # Defense Power
+
+    (0x1AB0C, 0x1ab3a), # ITEM/SPELL/ARMOR/WEAPONS/STATUS/CUSTOMIZE/SAVE
+
+    (0x19BED, 0x19Bf2), # NEXT
+    (0x19C52, 0x19c5a), # ATTACK
+    (0x19C73, 0x19c7b), # DEFENSE
+    (0x19C83, 0x19c8b), # SPEED
+    (0x19C93, 0x19c9b), # MAGIC
+    (0x19CA3, 0x19cac), # ACCURACY
+    (0x19CBA, 0x19cc3), # EVADE
+
+    (0x19D3F, 0x19d4d), # LIFE INDICATE
+    (0x19D56, 0x19d5c), # SCALE
+    (0x19D61, 0x19d67), # FIGURE
+    (0x19D6D, 0x19d74), # CONTROL
+    (0x19D8B, 0x19d91), # AUTO
+    (0x19D9D, 0x19da3), # MANUAL
+    (0x19DD7, 0x19de4), # MESSAGE SPEED
+    (0x19DE5, 0x19df3) # WINDOW COLOR
 
 ]
 
@@ -135,7 +152,6 @@ mte_tbl: dict = {
     0x74: '.<END>', 0x75: 'I\'m ', 0x76: 'el', 0x77: 'with ', 0x78: 'a ', 0x79: 'Spencer', 0x7A: 'ma', 0x7B: 'in ',
     0x7C: 'monst', 0x7D: 'k ', 0x7E: '\'t '
 }
-
 
 special_tbl: dict = {
     # Character Speaking
@@ -237,7 +253,8 @@ special_tbl: dict = {
     0x2050: 'Dark King', 0x2051: 'Demoplay'}
 
 dialogues_to_move: list = [
-    '250', '251', '253', '254', '255', '256', '316', '317']
+    '250', '251', '253', '254', '255', '256', '316', '317'
+]
 
 dialogues_to_keep: dict = {
     '11': 0x1BF26 + 3, '236': 0x1C261 + 3, '237': 0x1C413 + 3, '239': 0x1C82F + 3,
@@ -502,13 +519,16 @@ def do_insert_script(rom, script):
     with open(rom, 'rb+') as f:
         for block, value in buffer.items():
             # print("BLOCK: " + block)
-            if block == '244':
+            if block == '244': # GP
                 continue
             [text, offsets] = value
             encoded_text = do_encode_text(text) # codifica il testo
             [offset_from, offset_to] = offsets
             f.seek(offset_from) # vado all'indirizzo del testo originale
-            f.write(b'\xf0') # scrivo 0xf0
+            if int(block) >= 339 and int(block) <= 361:
+                f.write(b'\xf0\xf3') # scrivo 0xf0 e 0xf1
+            else:
+                f.write(b'\xf0') # scrivo 0xf0
             f.write(struct.pack('<H', index)) # scrivo l'indice della tabella nel vecchio testo
             index_offset = table_offset + (index * 3) # calcolo l'indirizzo dell'indice della tabella
             f.seek(index_offset) # vado all'indirizzo dell'indice della tabella
