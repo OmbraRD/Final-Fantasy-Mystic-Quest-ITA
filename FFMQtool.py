@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import argparse, os, sys, struct, zlib, struct
+import argparse
+import os
+import struct
+import zlib
 from collections import OrderedDict
 
 dialogues: list = [
@@ -73,53 +76,53 @@ dialogues: list = [
     (0x1D556, 0x1D55E), (0x1D55F, 0x1D56B), (0x1D56C, 0x1D577), (0x1D578, 0x1D582), (0x1D58F, 0x1D599),
     (0x1D59C, 0x1D5AA), (0x1D5AF, 0x1D5B4), (0x1D5B7, 0x1D5C9), (0x1D5DE, 0x1D5E4),
     #
-    (0x18776, 0x1877c), # Empty!
-    (0x18BF5, 0x18BFc), # How many?
-    (0x18C05, 0x18c0a), # Price
-    (0x18c13, 0x18c17), # Gold
+    (0x18776, 0x1877c),  # Empty!
+    (0x18BF5, 0x18BFc),  # How many?
+    (0x18C05, 0x18c0a),  # Price
+    (0x18c13, 0x18c17),  # Gold
 
-    (0x1A004, 0x1a017), # Give up? No/Yes
-    (0x1A4c2, 0x1A4d0), # Battlefield Round
-    (0x1A4F8, 0x1a506), # Already cleaned out!
+    (0x1A004, 0x1a017),  # Give up? No/Yes
+    (0x1A4c2, 0x1A4d0),  # Battlefield Round
+    (0x1A4F8, 0x1a506),  # Already cleaned out!
 
-    (0x1A146, 0x1A14A), # ITEM - BATTLE SUB
-    (0x1A246, 0x1A24B), # SPELL - BATTLE SUB
+    (0x1A146, 0x1A14A),  # ITEM - BATTLE SUB
+    (0x1A246, 0x1A24B),  # SPELL - BATTLE SUB
 
-    (0x1B0BE, 0x1b0C4), # BATTLE
-    (0x1B0CF, 0x1b0d2), # RUN (1BYTE)
-    (0x1B0DD, 0x1b0e4), # CONTROL (1BYTE)
+    (0x1B0BE, 0x1b0C4),  # BATTLE
+    (0x1B0CF, 0x1b0d2),  # RUN (1BYTE)
+    (0x1B0DD, 0x1b0e4),  # CONTROL (1BYTE)
 
-    (0x1b13c, 0x1b140), # ITEM
-    (0x1B14B, 0x1b152), # DEFENSE
-    (0x1B15D, 0x1b163), # ATTACK
-    (0x1B16E, 0x1b173), # SPELL
+    (0x1b13c, 0x1b140),  # ITEM
+    (0x1B14B, 0x1b152),  # DEFENSE
+    (0x1B15D, 0x1b163),  # ATTACK
+    (0x1B16E, 0x1b173),  # SPELL
 
-    (0x1B344, 0x1b348), # LIFE
-    (0x1953A, 0x19542), # NEW GAME
-    (0x195D9, 0x195e6), # Save completed
-    (0x196A4, 0x196aa), # Empty!
-    (0x19A65, 0x19a70), # Defense Total
-    (0x19AD3, 0x19adb), # Attack Power
-    (0x19B0A, 0x19b13), # Defense Power
+    (0x1B344, 0x1b348),  # LIFE
+    (0x1953A, 0x19542),  # NEW GAME
+    (0x195D9, 0x195e6),  # Save completed
+    (0x196A4, 0x196aa),  # Empty!
+    (0x19A65, 0x19a70),  # Defense Total
+    (0x19AD3, 0x19adb),  # Attack Power
+    (0x19B0A, 0x19b13),  # Defense Power
 
-    (0x1AB0C, 0x1ab3a), # ITEM/SPELL/ARMOR/WEAPONS/STATUS/CUSTOMIZE/SAVE
+    (0x1AB0C, 0x1ab3a),  # ITEM/SPELL/ARMOR/WEAPONS/STATUS/CUSTOMIZE/SAVE
 
-    (0x19BED, 0x19Bf2), # NEXT
-    (0x19C52, 0x19c5a), # ATTACK
-    (0x19C73, 0x19c7b), # DEFENSE
-    (0x19C83, 0x19c8b), # SPEED
-    (0x19C93, 0x19c9b), # MAGIC
-    (0x19CA3, 0x19cac), # ACCURACY
-    (0x19CBA, 0x19cc3), # EVADE
+    (0x19BED, 0x19Bf2),  # NEXT
+    (0x19C52, 0x19c5a),  # ATTACK
+    (0x19C73, 0x19c7b),  # DEFENSE
+    (0x19C83, 0x19c8b),  # SPEED
+    (0x19C93, 0x19c9b),  # MAGIC
+    (0x19CA3, 0x19cac),  # ACCURACY
+    (0x19CBA, 0x19cc3),  # EVADE
 
-    (0x19D3F, 0x19d4d), # LIFE INDICATE
-    (0x19D56, 0x19d5c), # SCALE
-    (0x19D61, 0x19d67), # FIGURE
-    (0x19D6D, 0x19d74), # CONTROL
-    (0x19D8B, 0x19d91), # AUTO
-    (0x19D9D, 0x19da3), # MANUAL
-    (0x19DD7, 0x19de4), # MESSAGE SPEED
-    (0x19DE5, 0x19df3) # WINDOW COLOR
+    (0x19D3F, 0x19d4d),  # LIFE INDICATE
+    (0x19D56, 0x19d5c),  # SCALE
+    (0x19D61, 0x19d67),  # FIGURE
+    (0x19D6D, 0x19d74),  # CONTROL
+    (0x19D8B, 0x19d91),  # AUTO
+    (0x19D9D, 0x19da3),  # MANUAL
+    (0x19DD7, 0x19de4),  # MESSAGE SPEED
+    (0x19DE5, 0x19df3)  # WINDOW COLOR
 
 ]
 
@@ -252,19 +255,30 @@ special_tbl: dict = {
     0x204B: 'Ice Golem', 0x204C: 'Dual Headed Hydra', 0x204D: 'Twin Headed Wyvern', 0x204E: 'Pazuzu', 0x204F: 'Zuh',
     0x2050: 'Dark King', 0x2051: 'Demoplay'}
 
+# Dialogs to move at the end of the block where there is a little free space
 dialogues_to_move: list = [
     '250', '251', '253', '254', '255', '256', '316', '317'
 ]
 
+# Dialogs to move in place of old text to maintain same bank
 dialogues_to_keep: dict = {
     '11': 0x1BF26 + 3, '236': 0x1C261 + 3, '237': 0x1C413 + 3, '239': 0x1C82F + 3,
     '240': 0x1CA56 + 3, '241': 0x1D9DE + 3, '243': 0x1DC76 + 3}
 
+
+def pc2snes_lorom(offset):
+    return ((offset * 2) & 0xFF0000) + (offset & 0x7FFF) + 0x8000
+
+
+def snes2pc_lorom(offset):
+    return (int(offset / 2) & 0xFF0000) + (offset & 0xFFFF) - 0x8000
+
+
 def main():
-    version = 'v0.1'
+    version = 'v0.8'
 
     desc = 'FFMQtool {} - Final Fantasy Mystic Quest SCRIPT Tool\n'.format(version) + \
-           'Created by _Ombra_ of Mumble Translations\n' + \
+           'Created by _Ombra_ and Clomax of Mumble Translations\n' + \
            'Website: https://mumble.romhacking.it'
 
     parser = argparse.ArgumentParser(prog='FFMQtool',
@@ -273,14 +287,13 @@ def main():
 
     commands = parser.add_subparsers(dest='command')
 
-    extract = commands.add_parser('extract', help='extract script or font from ROM')
-    extract.add_argument('SCRIPTorFONT', choices=['script', 'font'])
+    extract = commands.add_parser('extract', help='extract script and font from ORIGINAL ROM')
     extract.add_argument('ROM', help='ROM file')
 
-    insert = commands.add_parser('insert', help='extract script or font from ROM')
-    insert.add_argument('SCRIPTorFONT', choices=['script', 'font'])
-    insert.add_argument('FILE', help='SCRIPT TXT or FONT BIN file')
+    insert = commands.add_parser('insert', help='insert script and font into EXPANDED ROM')
     insert.add_argument('ROM', help='ROM file')
+    insert.add_argument('SCRIPT', help='SCRIPT file')
+    insert.add_argument('FONT', help='FONT file')
 
     args = parser.parse_args()
 
@@ -296,54 +309,51 @@ def main():
 
             rom = open(args.ROM, "rb").read()
             # Check validity of ROM
-            # check_rom(rom)
-
-            if args.SCRIPTorFONT == 'script':
-                do_extract_script(rom)
-            else:
-                do_extract_font(rom)
+            check_original_rom(rom)
+            do_extract_script(rom)
+            do_extract_font(rom)
 
         # If insert argument is passed, check if folder exists and is a folder, then insert
         elif args.command == 'insert':
 
-            if not os.path.exists(args.FILE) or not os.path.isfile(args.FILE):
-                print('\nSCRIPT of FONT Files do not exist')
+            if not os.path.exists(args.ROM) or not os.path.isfile(args.ROM):
+                print('\nROM file does not exist')
                 exit()
-            elif not os.path.exists(args.ROM) or not os.path.isfile(args.ROM):
-                print('\nROM Files do not exist')
+            elif not os.path.exists(args.SCRIPT) or not os.path.isfile(args.SCRIPT):
+                print('\nSCRIPT file does not exist')
                 exit()
 
-            rom = open(args.ROM, 'rb+').read()
-            # Check validity of ROM
-            # check_rom(rom)
+            elif not os.path.exists(args.FONT) or not os.path.isfile(args.FONT):
+                print('\nFONT file does not exist')
+                exit()
+            elif not os.path.getsize(args.ROM) == 1048576:
+                print('\nLooks like the ROM is not expanded')
+                exit()
 
-            if args.SCRIPTorFONT == 'script':
-                script = open(args.FILE, 'r').readlines()
-                do_insert_script(args.ROM, args.FILE)
-            elif args.SCRIPTorFONT == 'font':
-                font = open(args.FILE, 'rb').read()
-                do_insert_font(rom, font)
+            script = open(args.SCRIPT, 'r', encoding="utf-8")
+            do_insert_script(args.ROM, script)
+            font = open(args.FONT, 'rb').read()
+            do_insert_font(args.ROM, font)
 
 
-def check_rom(rom):
+def check_original_rom(rom):
     # Read ROM name and calculate CRC32
     rom_name = rom[0x7FC0:0x7FD6]
     rom_crc = hex(zlib.crc32(rom) & 0xffffffff)
     # Check if ROM is correct. If it is, continue execution.
     if rom_name != b'FF MYSTIC QUEST       ' or rom_crc != '0x2c52c792':
-        print('\nROM file is not correct')
+        print('\nROM file is not correct\nPlease use a ROM with a CRC of 0x2C52C792')
         exit()
     else:
         pass
 
 
 ########################################################################################################################
-# EXTRACTOR
+# EXTRACTION
 ########################################################################################################################
 
 
 def do_extract_script(rom):
-
     print("\nExtracting {} dialogues...".format(len(dialogues) + 1))
     output = open("dump_eng.txt", "w", encoding="utf-8")
     i = 0
@@ -358,7 +368,7 @@ def do_extract_script(rom):
         i += 1
 
     output.close()
-    print("Extraction completed!")
+    print("Script extraction complete!")
 
 
 def do_decode_block(block):
@@ -409,7 +419,7 @@ def do_decode_block(block):
 
 def do_extract_font(rom):
     print("\nExtracting font...")
-    output = open("font.bin", "wb")
+    output = open("font_eng.bin", "wb")
 
     # Reading the font from the ROM (4096 bytes)
     font_data: bytes = rom[0x38030:0x39030]
@@ -433,19 +443,101 @@ def do_extract_font(rom):
         i += 448
 
     output.close()
-    print("Extraction completed!")
+    print("Font extraction complete!")
 
 
 ########################################################################################################################
 # INSERTION
 ########################################################################################################################
 
-def pc2snes_lorom(offset):
-    return ((offset * 2) & 0xFF0000) + (offset & 0x7FFF) + 0x8000
+def do_insert_script(rom, script):
+    print("\nInserting script...")
 
+    rom = open(rom, 'rb+')
+    # Format script for insertion
+    buffer = OrderedDict()
+    block = ''
+    for line in script:
+        if '[BLOCK ' in line:
+            splitted_line = line.split(' ')
+            block = splitted_line[1].replace(':', '')
+            offset_from = int(splitted_line[2], 16)
+            offset_to = int(splitted_line[4].replace(']\n', ''), 16)
+            buffer[block] = ['', [offset_from, offset_to]]
+        else:
+            buffer[block][0] += line
 
-def snes2pc_lorom(offset):
-    return (int(offset / 2) & 0xFF0000) + (offset & 0xFFFF) - 0x8000
+    script.close()
+
+    ptr_table_offset = 0x81000
+    same_bank_offset = 0x1ff65  # 149 bytes available
+    new_text_offset = 0x82000
+
+    # Loop for text insertion into rom
+    index = 0
+
+    for block, value in buffer.items():
+
+        # Blocks to skip because of length or do not require a translation
+        if block == '244':  # Skip GP because it is too short
+            continue
+
+        [text, offsets] = value
+        encoded_text = do_encode_text(text)  # Encode text
+        [offset_from, offset_to] = offsets
+        rom.seek(offset_from)  # Go the the offset of the original text
+
+        # If we are repointing menu items, write a second control byte, else just the normal one
+        if 339 <= int(block) <= 361:
+            rom.write(b'\xf0\xf3')
+        else:
+            rom.write(b'\xf0')
+        # Write the index of the pointer to the new location of the text
+        rom.write(struct.pack('<H', index))
+        # Calculate the offset that goes inside the pointer table and go there
+        index_offset = ptr_table_offset + (index * 3)
+        rom.seek(index_offset)
+
+        # Check which dialog goes where and write the pointers into the pointer table
+        if block in dialogues_to_move:
+            new_text_pointer = struct.pack('i', pc2snes_lorom(same_bank_offset))
+        elif block in dialogues_to_keep.keys():
+            new_text_pointer = struct.pack('i', pc2snes_lorom(dialogues_to_keep.get(block)))
+        else:
+            new_text_pointer = struct.pack('i', pc2snes_lorom(new_text_offset))
+        rom.write(new_text_pointer[:3])
+
+        # Write the return pointer into the pointer table
+        return_pointer = struct.pack('i', pc2snes_lorom(offset_to))
+        rom.write(return_pointer[:3])
+
+        index += 1
+
+        # Move to the correct offset before writing the text
+        if block in dialogues_to_move:
+            rom.seek(same_bank_offset)
+        elif block in dialogues_to_keep.keys():
+            rom.seek(dialogues_to_keep.get(block))
+        else:
+            rom.seek(new_text_offset)
+
+        # Write the text
+        rom.write(encoded_text)
+
+        # Write the index to the return pointer at the end of the text
+        rom.write(b'\xf0')
+        rom.write(struct.pack('<H', index))
+        if block in dialogues_to_move:
+            same_bank_offset = rom.tell()
+        elif block in dialogues_to_keep.keys():
+            pass
+        else:
+            new_text_offset = rom.tell()
+
+        index += 1
+
+    rom.close()
+
 
 def do_encode_text(text):
     encoded_text = b''
@@ -496,76 +588,17 @@ def do_encode_text(text):
                         raise Exception(char)
                     encoded_text += bytes([encoded_char])
         i += 1
-    # print(encoded_text)
+
     return encoded_text
 
-def do_insert_script(rom, script):
-    buffer = OrderedDict()
-    with open(script, 'r') as f:
-        block = ''
-        for line in f:
-            if '[BLOCK ' in line:
-                splitted_line = line.split(' ')
-                block = splitted_line[1].replace(':', '')
-                offset_from = int(splitted_line[2], 16)
-                offset_to = int(splitted_line[4].replace(']\n', ''), 16)
-                buffer[block] = ['', [offset_from, offset_to]]
-            else:
-                buffer[block][0] += line
-    index = 0
-    table_offset = 0x81000
-    old_text_offset = 0x1ff65 # 149 bytes disponibili
-    new_text_offset = 0x82000
-    with open(rom, 'rb+') as f:
-        for block, value in buffer.items():
-            # print("BLOCK: " + block)
-            if block == '244': # GP
-                continue
-            [text, offsets] = value
-            encoded_text = do_encode_text(text) # codifica il testo
-            [offset_from, offset_to] = offsets
-            f.seek(offset_from) # vado all'indirizzo del testo originale
-            if int(block) >= 339 and int(block) <= 361:
-                f.write(b'\xf0\xf3') # scrivo 0xf0 e 0xf1
-            else:
-                f.write(b'\xf0') # scrivo 0xf0
-            f.write(struct.pack('<H', index)) # scrivo l'indice della tabella nel vecchio testo
-            index_offset = table_offset + (index * 3) # calcolo l'indirizzo dell'indice della tabella
-            f.seek(index_offset) # vado all'indirizzo dell'indice della tabella
-            if block in dialogues_to_move:
-                new_text_pointer = struct.pack('i', pc2snes_lorom(old_text_offset)) # converto l'indirizzo
-            elif block in dialogues_to_keep.keys():
-                new_text_pointer = struct.pack('i', pc2snes_lorom(dialogues_to_keep.get(block)))
-            else:
-                new_text_pointer = struct.pack('i', pc2snes_lorom(new_text_offset)) # converto l'indirizzo
-            f.write(new_text_pointer[:3]) # scrivo il puntatore alla posizione del nuovo testo nella tabella
-            return_pointer = struct.pack('i', pc2snes_lorom(offset_to)) # converto l'indirizzo di ritorno
-            f.write(return_pointer[:3]) # scrivo il puntatore di ritorno al vecchio testo nella tabella
-            index += 1 # incremento l'indice
-            if block in dialogues_to_move:
-                f.seek(old_text_offset) # vado all'indirizzo dove scrivere il testo
-            elif block in dialogues_to_keep.keys():
-                f.seek(dialogues_to_keep.get(block)) # vado all'indirizzo dove scrivere il testo
-            else:
-                f.seek(new_text_offset) # vado all'indirizzo dove scrivere il testo
-            f.write(encoded_text) # scrivo il testo
-            f.write(b'\xf0') # scrivo 0xf0
-            f.write(struct.pack('<H', index)) # scrivo l'indice della tabella
-            if block in dialogues_to_move:
-                old_text_offset = f.tell()
-            elif block in dialogues_to_keep.keys():
-                pass
-            else:
-                new_text_offset = f.tell()
-            index += 1 # incremento l'indice
 
 def do_insert_font(rom, font):
-    print("\nInserting font...")
+    print("Inserting font...")
 
     # Prepping the compressed data (4096 bytes)
     compressed_font_data: list = [0] * 4096
 
-    output = open('ffmq_new.sfc', 'wb')
+    new_rom = list(open(rom, 'rb').read())
 
     # Read and organize the pixels in 64 bytes chunks
     i = 0
@@ -579,19 +612,19 @@ def do_insert_font(rom, font):
 
         while tile < 16:
             pixel = list(font[i:i + 2])
-            compressed_font_data[block+base+ofs:block+base+ofs+2] = pixel
+            compressed_font_data[block + base + ofs:block + base + ofs + 2] = pixel
             ofs += 0x40
             tile += 2
             i += 2
         base += 2
 
-    new_rom = list(rom)
     new_rom[0x38030:0x39030] = compressed_font_data
 
+    output = open(rom, 'wb')
     output.write(bytes(new_rom))
     output.close()
 
-    print("Insertion completed!")
+    print("\nInsertion completed!")
 
 
 if __name__ == '__main__':
