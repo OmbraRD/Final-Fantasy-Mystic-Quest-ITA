@@ -40,3 +40,11 @@ org $19534
 org $195D5
   ; SAVE COMPLETED HORIZONTAL POSITION
   db $15,$03
+
+org $19D75
+  ; CUSTOMIZE MENU - AUTO HORIZONTAL POSITION
+  db $2D ; Add to move left, subtract to move right
+
+org $19BDD
+  ; EXP
+  db $9E,$AC,$A9 ; ESP

@@ -73,7 +73,7 @@ dialogues: list = [
     (0x1D478 + 3, 0x1D483), (0x1D484 + 3, 0x1D48F), (0x1D490, 0x1D49B), (0x1D49C, 0x1D4A6), (0x1D4A7, 0x1D4B1),
     (0x1D4B2, 0x1D4BD), (0x1D4BE + 3, 0x1D4CE), (0x1D4CF, 0x1D4DE), (0x1D4DF, 0x1D4F0), (0x1D4F1, 0x1D4FD),
     (0x1D4FE, 0x1D506), (0x1D507, 0x1D514), (0x1D515, 0x1D529), (0x1D52A + 3, 0x1D538), (0x1D539 + 3, 0x1D54C),
-    (0x1D556, 0x1D55E), (0x1D55F, 0x1D56B), (0x1D56C, 0x1D577), (0x1D578, 0x1D582), (0x1D58F, 0x1D599),
+    (0x1D551, 0x1D55E), (0x1D55F, 0x1D56B), (0x1D56C, 0x1D577), (0x1D578, 0x1D582), (0x1D58F, 0x1D599),
     (0x1D59C, 0x1D5AA), (0x1D5AF, 0x1D5B4), (0x1D5B7, 0x1D5C9), (0x1D5DE, 0x1D5E4),
     #
     (0x18776, 0x1877c),  # Empty!
@@ -82,7 +82,7 @@ dialogues: list = [
     (0x18c13, 0x18c17),  # Gold
 
     (0x1A004, 0x1a017),  # Give up? No/Yes
-    (0x1A4c2, 0x1A4d0),  # Battlefield Round
+    (0x1A4c2, 0x1A4db),  # Battlefield Round
     (0x1A4F8, 0x1a506),  # Already cleaned out!
 
     (0x1A146, 0x1A14A),  # ITEM - BATTLE SUB
@@ -257,7 +257,7 @@ special_tbl: dict = {
 
 # Dialogs to move at the end of the block where there is a little free space
 dialogues_to_move: list = [
-    '250', '251', '253', '254', '255', '256', '316', '317'
+    '250', '251', '253', '254', '255', '256', '316', '317', '328'
 ]
 
 # Dialogs to move in place of old text to maintain same bank
@@ -398,10 +398,10 @@ def do_decode_block(block):
                 elif b1 in (0x1D, 0x1E, 0x1F, 0x20) and char in special_tbl:
                     decoded_block += special_tbl[char]
                     i += 1
-                elif b1 in (0x05, 0x1A, 0x1B, 0x1D, 0x1E, 0x1F, 0x20, 0x2E) and char not in special_tbl:
+                elif b1 in (0x1A, 0x1B, 0x1D, 0x1E, 0x1F, 0x20, 0x2E) and char not in special_tbl:
                     decoded_block += '<{:02X}{:02X}>'.format(b1, b2)
                     i += 1
-                elif b1 in (0x03, 0x08, 0x0C, 0x0F, 0x2F):
+                elif b1 in (0x03, 0x05, 0x08, 0x0C, 0x0F, 0x2F):
                     decoded_block += '<{:02X}{:02X}{:02X}>'.format(b1, b2, b3)
                     i += 2
                 else:
