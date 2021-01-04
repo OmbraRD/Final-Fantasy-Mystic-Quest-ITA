@@ -48,3 +48,8 @@ org $19D75
 org $19BDD
   ; EXP
   db $9E,$AC,$A9 ; ESP
+
+org $1acd6
+  ; Your name :
+  db $03,$1e,$1a,$03
+  db $15,$05
