@@ -52,10 +52,9 @@ org $195D5
   db $15,$03
 
 ;;
-;;
+;; CUSTOMIZE MENU - AUTO HORIZONTAL POSITION
 ;;
 org $19D75
-  ; CUSTOMIZE MENU - AUTO HORIZONTAL POSITION
   db $2D ; Add to move left, subtract to move right
 
 org $19BDD
@@ -73,3 +72,10 @@ org $18379
 
 org $18373
     db $AC ; BASEMENT (B=9B)
+
+;;
+;; YOUR NAME BOX SIZE
+;;
+org $1ACD6
+  db $03,$1E,$1A,$03
+  db $15,$05
