@@ -11,9 +11,6 @@ org $3FE7D
     db $88,$FE ; POINTER TO NEXT PHRASE
     ; db $C6 ; s
     db $05,$0B,$FA
-    db $90,$FE
-    db $05,$0B,$FA
-    db $90,$FE
+    db $8D,$FE
     ; db $B8,$C7 ; et
-    db $00,$00 ; FILL
-    db $00
+    db $00,$05
