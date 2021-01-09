@@ -70,7 +70,7 @@ org $18379
     db $08,$D6,$81 ; POINTER TO FLOOR # VARIABLE
     db $A9 ; FLOOR (F=9F)
 
-org $18373
+org $18372
     db $AC ; BASEMENT (B=9B)
 
 ;;
