@@ -277,7 +277,7 @@ def snes2pc_lorom(offset):
 
 
 def main():
-    version = 'v0.8'
+    version = 'v0.9'
 
     desc = 'FFMQtool {} - Final Fantasy Mystic Quest SCRIPT Tool\n'.format(version) + \
            'Created by _Ombra_ and Clomax of Mumble Translations\n' + \
@@ -296,6 +296,7 @@ def main():
     insert.add_argument('ROM', help='ROM file')
     insert.add_argument('SCRIPT', help='SCRIPT file')
     insert.add_argument('FONT', help='FONT file')
+    insert.add_argument('BATTLEGFX', help='BATTLEGFX file')
 
     args = parser.parse_args()
 
@@ -313,7 +314,7 @@ def main():
             # Check validity of ROM
             check_original_rom(rom)
             do_extract_script(rom)
-            do_extract_font(rom)
+            do_extract_graphics(rom)
 
         # If insert argument is passed, check if folder exists and is a folder, then insert
         elif args.command == 'insert':
@@ -335,7 +336,8 @@ def main():
             script = open(args.SCRIPT, 'r', encoding="utf-8")
             do_insert_script(args.ROM, script)
             font = open(args.FONT, 'rb').read()
-            do_insert_font(args.ROM, font)
+            battle = open(args.BATTLEGFX, 'rb').read()
+            do_insert_graphics(args.ROM, font, battle)
 
 
 def check_original_rom(rom):
@@ -419,9 +421,10 @@ def do_decode_block(block):
     return decoded_block
 
 
-def do_extract_font(rom):
-    print("\nExtracting font...")
-    output = open("font_eng.bin", "wb")
+def do_extract_graphics(rom):
+    print("\nExtracting graphics...")
+
+    output_font = open("font_eng.bin", "wb")
 
     # Reading the font from the ROM (4096 bytes)
     font_data: bytes = rom[0x38030:0x39030]
@@ -439,13 +442,40 @@ def do_extract_font(rom):
             pixelAB: bytes = font_data[i + 0x140:i + 0x142]
             pixelCD: bytes = font_data[i + 0x180:i + 0x182]
             pixelEF: bytes = font_data[i + 0x1C0:i + 0x1C2]
-            output.write(pixel01 + pixel23 + pixel45 + pixel67 + pixel89 + pixelAB + pixelCD + pixelEF)
+            output_font.write(pixel01 + pixel23 + pixel45 + pixel67 + pixel89 + pixelAB + pixelCD + pixelEF)
             tiles += 2
             i += 2
         i += 448
 
-    output.close()
-    print("Font extraction complete!")
+    output_font.close()
+
+    # Palette for Battle Graphics is at 0x07dac4 (16 bytes)
+    output_battle_gfx = open("battle_eng.bin", "wb")
+
+    # Reading the battle graphics from the ROM (1032 bytes)
+    battle_data: bytes = rom[0x4FB9D:0x4FFA5]
+
+    # Read and organize the pixels in 24 bytes chunks
+    i = 0
+    fill_data = b'\x00'
+    while i < len(battle_data):
+        pixel_data_a = battle_data[i + 0:i + 16]
+        pixel_data_b1 = battle_data[i + 16:i + 17] + fill_data
+        pixel_data_b2 = battle_data[i + 17:i + 18] + fill_data
+        pixel_data_b3 = battle_data[i + 18:i + 19] + fill_data
+        pixel_data_b4 = battle_data[i + 19:i + 20] + fill_data
+        pixel_data_b5 = battle_data[i + 20:i + 21] + fill_data
+        pixel_data_b6 = battle_data[i + 21:i + 22] + fill_data
+        pixel_data_b7 = battle_data[i + 22:i + 23] + fill_data
+        pixel_data_b8 = battle_data[i + 23:i + 24] + fill_data
+        output_battle_gfx.write(pixel_data_a +
+                                pixel_data_b1 + pixel_data_b2 + pixel_data_b3 + pixel_data_b4 +
+                                pixel_data_b5 + pixel_data_b6 + pixel_data_b7 + pixel_data_b8)
+        i += 24
+
+    output_battle_gfx.close()
+
+    print("Graphics extraction complete!")
 
 
 ########################################################################################################################
@@ -594,10 +624,10 @@ def do_encode_text(text):
     return encoded_text
 
 
-def do_insert_font(rom, font):
-    print("Inserting font...")
+def do_insert_graphics(rom, font, battle):
+    print("Inserting graphics...")
 
-    # Prepping the compressed data (4096 bytes)
+    # Prepping the compressed font data (4096 bytes)
     compressed_font_data: list = [0] * 4096
 
     new_rom = list(open(rom, 'rb').read())
@@ -621,6 +651,24 @@ def do_insert_font(rom, font):
         base += 2
 
     new_rom[0x38030:0x39030] = compressed_font_data
+
+    # Prepping the compressed battle graphics data (1032 bytes)
+    compressed_battle_data: list = [0] * 1032
+
+    # Read and organize the pixels in 32 bytes chunks
+
+    i = 0
+    ofs = 0
+    while i < len(battle):
+        encoded_bytes = list(battle[i:i + 17] + battle[i + 18:i + 19] + battle[i + 20:i + 21] +
+                             battle[i + 22:i + 23] + battle[i + 24:i + 25] + battle[i + 26:i + 27] +
+                             battle[i + 28:i + 29] + battle[i + 30:i + 31])
+
+        compressed_battle_data[ofs:ofs+24] = encoded_bytes
+        ofs += 24
+        i += 32
+
+    new_rom[0x4FB9D:0x4FFA5] = compressed_battle_data
 
     output = open(rom, 'wb')
     output.write(bytes(new_rom))
