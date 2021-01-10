@@ -122,7 +122,9 @@ dialogues: list = [
     (0x19D8B, 0x19d91),  # AUTO
     (0x19D9D, 0x19da3),  # MANUAL
     (0x19DD7, 0x19de4),  # MESSAGE SPEED
-    (0x19DE5, 0x19df3)  # WINDOW COLOR
+    (0x19DE5, 0x19df3),  # WINDOW COLOR
+    (0x1859D, 0x185a3),  # joinded!
+    (0x1ACDE, 0x1ACe7)  # Your name :
 
 ]
 
@@ -263,7 +265,7 @@ dialogues_to_move: list = [
 # Dialogs to move in place of old text to maintain same bank
 dialogues_to_keep: dict = {
     '11': 0x1BF26 + 3, '236': 0x1C261 + 3, '237': 0x1C413 + 3, '239': 0x1C82F + 3,
-    '240': 0x1CA56 + 3, '241': 0x1D9DE + 3, '243': 0x1DC76 + 3}
+    '240': 0x1CA56 + 3, '241': 0x1D9DE + 3, '243': 0x1DC76 + 3, '363': 0x1A4C2 + 3}
 
 
 def pc2snes_lorom(offset):
@@ -488,7 +490,7 @@ def do_insert_script(rom, script):
         rom.seek(offset_from)  # Go the the offset of the original text
 
         # If we are repointing menu items, write a second control byte, else just the normal one
-        if 339 <= int(block) <= 361:
+        if 339 <= int(block) <= 361 or int(block) == 363:
             rom.write(b'\xf0\xf3')
         else:
             rom.write(b'\xf0')
