@@ -49,57 +49,57 @@ org $9ad1
 ;    lda $0000,x
 
 ;org $12E000
-org $07F850
+org $07F900
 Start:
-    db "Story",$01
+    db "Storia",$01
     db "CHIHIRO FUJIOKA",$01
     db $01
-    db "Direction",$01
+    db "Direttore Creativo",$01
     db "KOUZI IDE",$01
     db $01
-    db "Monster Design",$01
+    db "Design dei Mostri",$01
     db "MASANORI 'JUN' MORITA",$01
     db $01
-    db "Map Design",$01
+    db "Design della Mappa",$01
     db "Hideshi Kyohnen",$01
     db $01
-    db "Translation & Storyline",$01
+    db "Traduzione & Trama",$01
     db "Yoshi Maekawa",$01
     db "Ted Woolsey",$01
     db $01
-    db "Main & Battle Program",$01
+    db "Programmazione Generale",$01
     db "Katsuhiro Kondoh",$01
     db $01
-    db "Battle Program",$01
+    db "Programmazione Battaglia",$01
     db "Shingo Tanaka",$01
     db $01
-    db "Field Program",$01
+    db "Programmazione Campo",$01
     db "Kiyotaka Goto",$01
     db "Kazuhiko Yoshioka",$01
     db $01
-    db "System Program",$01
+    db "Programmazione Sistema",$01
     db "Itikiti",$01
     db $01
-    db "Sound Program",$01
+    db "Programmazione Suono",$01
     db "Minoru Akao",$01
     db $01
-    db "Map Graphics",$01
+    db "Grafica della Mappa",$01
     db "PICASSO KABE",$01
     db $01
-    db "Monster Graphics",$01
+    db "Grafica dei Mostri",$01
     db "Yuki 'HM' Yasuda",$01
     db $01
-    db "Animation",$01
+    db "Animazione",$01
     db "Toshiyuki Momose",$01
     db $01
-    db "Map Characters",$01
+    db "Personaggi sulla Mappa",$01
     db "M. Shimoji",$01
     db $01
-    db "Sound Composer",$01
+    db "Compositori",$01
     db "R. Sasai",$01
     db "Y. Kawakami",$01
     db $01
-    db "Special Thanks To:",$01
+    db "Ringraziamenti Speciali",$01
     db "T. Fujii",$01
     db "Carol Moriyama",$01
     db "Kats A. Tayama",$01
@@ -117,6 +117,9 @@ Start:
     db "H. Suzuki",$01
     db "N. Williams",$01
     db "J. Yanagihara",$01
-    db "T. Nomura"
+    db $01
+    db "Traduzione Italiana",$01
+    db "-- Mumble Translations --",$01
+    db "Ombra, Chester, Clomax"
     db $00
 End:
