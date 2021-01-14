@@ -29,3 +29,10 @@ org $3a336
 ;    db $00
 
 ;; NOTE: There are 32 bytes of FF
+
+;;
+;; INTRO SCREEN
+;;
+org $0c8ef3
+    ;db "Press", $FE, "any", $FE, "button"
+    db " Premi", $FE, "un", $FE, "tasto "
