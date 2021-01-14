@@ -14,3 +14,12 @@ org $3FE7D
     db $8D,$FE
     ; db $B8,$C7 ; et
     db $00,$05
+
+;;
+;; REMOVE "s." AT THE END OF CAN'T CARRY ANYMORE
+;;
+org $3B613
+    ;db $C6,$D2 ; s.
+    db $D2 ; .
+    db $0A,$23,$B6
+    db $00
