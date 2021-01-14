@@ -124,7 +124,8 @@ dialogues: list = [
     (0x19DD7, 0x19de4),  # MESSAGE SPEED
     (0x19DE5, 0x19df3),  # WINDOW COLOR
     (0x1859D, 0x185a3),  # joinded!
-    (0x1ACDE, 0x1ACe7)  # Your name :
+    (0x1ACDE, 0x1ACe7),  # Your name :
+    (0x1B5B7, 0x1B5C8)  # You can't carry any more
 
 ]
 

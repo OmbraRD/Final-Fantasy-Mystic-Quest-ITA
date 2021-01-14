@@ -35,4 +35,4 @@ org $3a336
 ;;
 org $0c8ef3
     ;db "Press", $FE, "any", $FE, "button"
-    db " Premi", $FE, "un", $FE, "tasto "
+    db $FE,"Premi", $FE, "un", $FE, "tasto",$FE
