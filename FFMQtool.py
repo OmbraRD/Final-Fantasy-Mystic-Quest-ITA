@@ -514,6 +514,8 @@ def do_insert_script(rom, script):
         # Blocks to skip because of length or do not require a translation
         if block == '244':  # Skip GP because it is too short
             continue
+        if block == '339':  # Skip LIFE
+            continue
 
         [text, offsets] = value
         encoded_text = do_encode_text(text)  # Encode text
@@ -521,7 +523,7 @@ def do_insert_script(rom, script):
         rom.seek(offset_from)  # Go the the offset of the original text
 
         # If we are repointing menu items, write a second control byte, else just the normal one
-        if 339 <= int(block) <= 361 or int(block) == 363:
+        if 340 <= int(block) <= 361 or block == '363':
             rom.write(b'\xf0\xf3')
         else:
             rom.write(b'\xf0')

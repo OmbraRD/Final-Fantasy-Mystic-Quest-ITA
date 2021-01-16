@@ -34,5 +34,11 @@ org $3a336
 ;; INTRO SCREEN
 ;;
 org $0c8ef3
-    ;db "Press", $FE, "any", $FE, "button"
-    db $FE,"Premi", $FE, "un", $FE, "tasto",$FE
+   ; db "Press", $FE, "any", $FE, "button"
+   db $FE,"Premi", $FE, "un", $FE, "tasto",$FE
+
+;;
+;; LIFE
+;;
+org $3B344
+   db "VITA"
