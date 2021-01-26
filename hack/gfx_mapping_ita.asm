@@ -148,6 +148,9 @@ org $03B7B2 ; 3B7B2 SNES
 ;; BATTLE - SPELL SUBMENU - BLACK/WHITE/WIZARD MAGIC LEFT
 ;;
 
+org $3a313
+    db $ff,$d8,$d9,$ff
+
 ;org $3A2E1
 ;    db $05,$dc,$03 ; OPCODE 2 BYTES, AMOUNT OF ARGS
 ;    db $a31a ; POINTER TO WHITE

@@ -255,13 +255,13 @@ AccentedFont:
     lda #$2CDF
     sta $7E29E4
 
-    lda #$2C5C
+    lda #$2C5A
     sta $7E29E6
-    lda #$2C5D
+    lda #$2C5B
     sta $7E29E8
-    lda #$2C5E
+    lda #$2C5C
     sta $7E29EA
-    lda #$2C5F
+    lda #$2C5D
     sta $7E29EC
 .return:
     rtl
