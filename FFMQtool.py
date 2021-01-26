@@ -266,7 +266,8 @@ dialogues_to_move: list = [
 # Dialogs to move in place of old text to maintain same bank
 dialogues_to_keep: dict = {
     '11': 0x1BF26 + 3, '236': 0x1C261 + 3, '237': 0x1C413 + 3, '239': 0x1C82F + 3,
-    '240': 0x1CA56 + 3, '241': 0x1D9DE + 3, '243': 0x1DC76 + 3, '363': 0x1A4C2 + 3}
+    '240': 0x1CA56 + 3, '241': 0x1D9DE + 3, '243': 0x1DC76 + 3
+}
 
 
 def pc2snes_lorom(offset):
@@ -514,7 +515,11 @@ def do_insert_script(rom, script):
         # Blocks to skip because of length or do not require a translation
         if block == '244':  # Skip GP because it is too short
             continue
+        if block == '280':  # Skip poison
+            continue
         if block == '339':  # Skip LIFE
+            continue
+        if block == '363':  # Your name :
             continue
 
         [text, offsets] = value
@@ -523,7 +528,7 @@ def do_insert_script(rom, script):
         rom.seek(offset_from)  # Go the the offset of the original text
 
         # If we are repointing menu items, write a second control byte, else just the normal one
-        if 340 <= int(block) <= 361 or block == '363':
+        if 340 <= int(block) <= 361:
             rom.write(b'\xf0\xf3')
         else:
             rom.write(b'\xf0')

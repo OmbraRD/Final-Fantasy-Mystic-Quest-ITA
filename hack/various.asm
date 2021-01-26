@@ -42,3 +42,23 @@ org $0c8ef3
 ;;
 org $3B344
    db "VITA"
+
+;;
+;; statuses
+;;
+org $029D9A
+   ldx #$d3b3
+org $3D3AC
+   db "veleno",$00
+
+;;
+;; Your name:
+;; UGLY workaround by replacing one of the dictionary words
+;; since repointing with the hack breaks in one of 2 cases
+;;
+
+org $3baa0
+    db "nome"
+
+org $3acde
+    db "Il",$ff,"tuo",$ff,$41,":"
