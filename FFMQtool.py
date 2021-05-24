@@ -26,7 +26,7 @@ dialogues: list = [
     (0x1D79C, 0x1D7C5), (0x1D7CA, 0x1D7F1), (0x1D7F5, 0x1D81B), (0x1D823, 0x1D857), (0x1D862, 0x1D88E),
     (0x1D88F, 0x1D8A3), (0x1D8A5, 0x1D8BB), (0x1D8BC, 0x1D8D3), (0x1D8D4, 0x1D8FC), (0x1D8FD, 0x1D90F),
     (0x1D910, 0x1D919), (0x1D91A, 0x1D92F), (0x1D930, 0x1D943), (0x1D944, 0x1D958), (0x1D97D, 0x1D9A4),
-    (0x1D9A7, 0x1D9BD), (0x1D9BE, 0x1D9D4), (0x1D9D5, 0x1D9DD), (0x1D9DE, 0x1DA51), (0x1DA55, 0x1DA73),
+    (0x1D9A7, 0x1D9BD), (0x1D9BE, 0x1D9D4), (0x1D9D5 + 2, 0x1D9DD), (0x1D9DE, 0x1DA51), (0x1DA55, 0x1DA73),
     (0x1DA77, 0x1DA81), (0x1DA92, 0x1DACB), (0x1DADF, 0x1DAEC), (0x1DB22 + 2, 0x1DB95), (0x1DB9F, 0x1DBBF),
     (0x1DBC0, 0x1DBD8), (0x1DBD9, 0x1DBF3), (0x1DBF4, 0x1DC02), (0x1DC21, 0x1DC72), (0x1DC76, 0x1DD2C),
     (0x1DD3A, 0x1DD87), (0x1DDA0, 0x1DDE0), (0x1DDF0, 0x1DE0C), (0x1DE10, 0x1DE4E), (0x1DE58, 0x1DE79),
@@ -513,13 +513,17 @@ def do_insert_script(rom, script):
     for block, value in buffer.items():
 
         # Blocks to skip because of length or do not require a translation
-        if block == '244':  # Skip GP because it is too short
+        # Skip GP because it is too short
+        if block == '244':
             continue
-        if block == '280':  # Skip poison
+        # Skip statuses
+        if block == ('276', '277', '278', '279', '280', '281', '282', '283'):
             continue
-        if block == '339':  # Skip LIFE
+        # Skip LIFE
+        if block == '339':
             continue
-        if block == '363':  # Your name :
+        # Your name :
+        if block == '363':
             continue
 
         [text, offsets] = value
